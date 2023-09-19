@@ -53,4 +53,7 @@ function Player:EquipShield(shield)
     shield:Equip(self)
 end
 
+function Player:LoadAnimations()
+end
+
 return Player

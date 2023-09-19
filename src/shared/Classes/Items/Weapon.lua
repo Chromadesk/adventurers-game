@@ -25,7 +25,6 @@ function Weapon:OnNew()
 end
 
 function Weapon:Equip(player)
-    self.player = player
     self.assetFolder.Parent = player.model
 end
 
@@ -41,10 +40,6 @@ end
 
 function Weapon:InitializeAnimations()
     --placeholder
-end
-
-function Weapon:Use()
-    print("yea!")
 end
 
 return Weapon

@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 local player = game:GetService("Players").LocalPlayer
 
 local CameraClass = require(ReplicatedStorage.Classes.Entities.Player.Camera)
-local camera = CameraClass:New({player = player, target = player.Character.HumanoidRootPart})
+local camera = CameraClass:New({player = player, mouse = player:GetMouse(), target = player.Character.HumanoidRootPart})
 
 RunService.RenderStepped:Connect(
     function(a)

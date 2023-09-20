@@ -11,6 +11,7 @@ Players.PlayerAdded:Connect(
     function(player)
         plrObjList[player.Name] = PlayerClass:New({reference = player, health = 100, speed = 16})
         print(plrObjList[player.Name])
+        RemoteFolder.LoadAnimations:FireClient(player, plrObjList[player.Name])
     end
 )
 
@@ -20,9 +21,11 @@ Players.PlayerRemoving:Connect(
     end
 )
 
-RemoteFolder.GetPlrObjList.OnServerEvent:Connect(
+RemoteFolder.GetPlrObj.OnServerEvent:Connect(
     function(player)
-        RemoteFolder.GetPlrObjList:FireClient(player, plrObjList)
-        print(plrObjList)
+        while not plrObjList[player.Name] do
+            wait()
+        end
+        RemoteFolder.GetPlrObj:FireClient(player, plrObjList[player.Name])
     end
 )

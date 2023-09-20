@@ -49,17 +49,20 @@ function Weapon:Use(player)
         return
     end
     onCooldown = true
+    print("cooldon strd")
     player.animations.attack:Play()
     wait(self.attackTime / 2)
 
     local hitbox = getHitbox(player.model, self.range)
     hitbox.CFrame = player.model.HumanoidRootPart.CFrame
     hitbox.CFrame = hitbox.CFrame:ToWorldSpace(CFrame.new(0, 0, -self.range / 2))
+    hitbox.weld.Part1 = player.model.HumanoidRootPart
     hitbox.Parent = workspace
     wait(0.05)
     hitbox:Destroy()
 
     wait(self.cooldown + self.attackTime / 2)
+    print("coodown oever!")
     player.animations.attack:Stop()
     onCooldown = false
 end
@@ -70,7 +73,8 @@ function getHitbox(player, range)
     hitbox.CanCollide = false
     hitbox.Anchored = false
     hitbox.Size = Vector3.new(3 * (range / 100 + 1), 1, range)
-    local weld = Instance.new("Weld")
+    local weld = Instance.new("WeldConstraint")
+    weld.Name = "weld"
     weld.Part0 = hitbox
     weld.Parent = hitbox
 

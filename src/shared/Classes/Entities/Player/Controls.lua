@@ -13,7 +13,7 @@ function Controls:FilterInput(input, wasProcessed)
     end
 
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        print("m1")
+        self.player.attackRemote:FireServer()
     end
     if input.UserInputType == Enum.UserInputType.Keyboard then
         if input.KeyCode.Name == "E" then

@@ -1,6 +1,7 @@
 --TODO make camera methods!!
-local WeaponClass = require(game:GetService("ReplicatedStorage").Classes.Items.Weapon)
-local Class = require(game:GetService("ReplicatedStorage").Classes.Class)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
+local Class = require(ReplicatedStorage.Classes.Class)
 local Player = Class:Extend()
 
 Player._maxHealth = nil
@@ -13,6 +14,8 @@ Player.shield = nil
 Player.reference = nil
 Player.model = nil
 Player.humanoid = nil
+Player.animations = {}
+Player.attackRemote = nil
 
 function Player:OnNew()
     assert(self.reference, "Player must reference a roblox player")
@@ -26,7 +29,17 @@ function Player:OnNew()
     self.humanoid = self.model.Humanoid
     self.humanoid.WalkSpeed = 16
 
-    self:EquipWeapon(WeaponClass:New({assetFolder = game:GetService("ReplicatedStorage").Assets.Items.Longsword}))
+    self.attackRemote = Instance.new("RemoteEvent")
+    self.attackRemote.Name = "Attack"
+    self.attackRemote.Parent = self.model
+
+    self:EquipWeapon(WeaponClass:New({assetFolder = ReplicatedStorage.Assets.Items.Longsword}))
+    self:GetAnimations()
+    self.attackRemote.OnServerEvent:Connect(
+        function(player)
+            self.weapon:Use(self)
+        end
+    )
 end
 
 function Player:TakeDamage(dam)
@@ -53,7 +66,21 @@ function Player:EquipShield(shield)
     shield:Equip(self)
 end
 
-function Player:LoadAnimations()
+--Fills Player.animations with AnimationTracks. Uses default animations in Assets unless equipped weapon/shield
+--comes with overriding animations.
+local animsLoaded = false
+function Player:GetAnimations()
+    if animsLoaded then
+        return self.animations
+    end
+
+    self.animations["move"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Move)
+    self.animations["idle"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Idle)
+    self.animations["attack"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Attack)
+    self.animations["guard"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Guard)
+    animsLoaded = true
+
+    return self.animations
 end
 
 return Player

@@ -7,8 +7,9 @@ function Controls:OnNew()
     assert(self.player and self.player.reference, "Controls requires a PlayerClass object.")
 end
 
-function Controls:FilterInput(input, wasProcessed)
-    if wasProcessed then
+local pauseInput = false
+function Controls:InputBegan(input, wasProcessed)
+    if wasProcessed or pauseInput then
         return
     end
 
@@ -17,7 +18,20 @@ function Controls:FilterInput(input, wasProcessed)
     end
     if input.UserInputType == Enum.UserInputType.Keyboard then
         if input.KeyCode.Name == "E" then
-            print("e")
+            pauseInput = true
+            self.player.guardRemote:FireServer(true)
+        end
+    end
+end
+
+function Controls:InputEnded(input, wasProcessed)
+    if wasProcessed then
+        return
+    end
+    if input.UserInputType == Enum.UserInputType.Keyboard then
+        if input.KeyCode.Name == "E" then
+            self.player.guardRemote:FireServer(false)
+            pauseInput = false
         end
     end
 end

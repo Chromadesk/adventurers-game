@@ -12,7 +12,12 @@ RemoteFolder.GetPlrObj.OnClientEvent:Connect(
 
         UIS.InputBegan:Connect(
             function(i, wp)
-                controls:FilterInput(i, wp)
+                controls:InputBegan(i, wp)
+            end
+        )
+        UIS.InputEnded:Connect(
+            function(i, wp)
+                controls:InputEnded(i, wp)
             end
         )
     end

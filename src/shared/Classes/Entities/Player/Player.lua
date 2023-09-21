@@ -1,6 +1,7 @@
 --TODO make camera methods!!
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
+local ShieldClass = require(ReplicatedStorage.Classes.Items.Shield)
 local Class = require(ReplicatedStorage.Classes.Class)
 local Player = Class:Extend()
 
@@ -15,6 +16,7 @@ Player.reference = nil
 Player.model = nil
 Player.humanoid = nil
 Player.attackRemote = nil
+Player.guardRemote = nil
 Player.animations = nil
 
 function Player:OnNew()
@@ -27,6 +29,8 @@ function Player:OnNew()
     self._maxSpeed = self.speed
     self.model = workspace:WaitForChild(self._name)
     self.humanoid = self.model.Humanoid
+
+    --Server loaded animations
     self.animations = {}
     self.animations["attack"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Attack)
     self.animations["guard"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Guard)
@@ -36,7 +40,9 @@ function Player:OnNew()
     self.humanoid.Health = self._maxHealth
     self.humanoid.MaxHealth = self._maxHealth
     self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
+
     self:EquipWeapon(WeaponClass:New({assetFolder = ReplicatedStorage.Assets.Items.Longsword}))
+    self:EquipShield(ShieldClass:New({assetFolder = ReplicatedStorage.Assets.Items.Shield}))
 
     self.attackRemote = Instance.new("RemoteEvent")
     self.attackRemote.Name = "Attack"
@@ -44,6 +50,14 @@ function Player:OnNew()
     self.attackRemote.OnServerEvent:Connect(
         function(player)
             self.weapon:Use(self)
+        end
+    )
+    self.guardRemote = Instance.new("RemoteEvent")
+    self.guardRemote.Name = "Guard"
+    self.guardRemote.Parent = self.model
+    self.guardRemote.OnServerEvent:Connect(
+        function(player, isActive)
+            self.shield:Use(self, isActive)
         end
     )
 end

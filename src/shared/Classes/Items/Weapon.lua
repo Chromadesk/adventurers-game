@@ -49,7 +49,6 @@ function Weapon:Use(player)
         return
     end
     onCooldown = true
-    print("cooldon strd")
     player.animations.attack:Play()
     wait(self.attackTime / 2)
 
@@ -61,8 +60,7 @@ function Weapon:Use(player)
     wait(0.05)
     hitbox:Destroy()
 
-    wait(self.cooldown + self.attackTime / 2)
-    print("coodown oever!")
+    wait(self.attackTime / 2 + self.cooldown)
     player.animations.attack:Stop()
     onCooldown = false
 end

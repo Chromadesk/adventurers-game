@@ -1,6 +1,8 @@
 local Class = require(game:GetService("ReplicatedStorage").Classes.Class)
 local Weapon = Class:Extend()
 
+local HitDetection = require(game:GetService("ReplicatedStorage").Classes.HitDetection)
+
 Weapon.assetFolder = nil
 Weapon.statsFolder = nil
 Weapon.attackTime = nil
@@ -29,8 +31,8 @@ function Weapon:OnNew()
     self:IntializeModel()
 end
 
-function Weapon:Equip(player)
-    self.assetFolder.Parent = player.model
+function Weapon:Equip(entity)
+    self.assetFolder.Parent = entity.model
 end
 
 function Weapon:IntializeModel()
@@ -44,60 +46,17 @@ function Weapon:IntializeModel()
 end
 
 local onCooldown = false
-function Weapon:Use(player)
+function Weapon:Use(entity)
     if onCooldown then
         return
     end
     onCooldown = true
-    player.animations.attack:Play()
+    entity.animations.attack:Play()
     wait(self.attackTime / 2)
-
-    local hitbox = getHitbox(player.model, self.range, self.damage)
-    hitbox.CFrame = player.model.HumanoidRootPart.CFrame
-    hitbox.CFrame = hitbox.CFrame:ToWorldSpace(CFrame.new(0, 0, -self.range / 2))
-    hitbox.weld.Part1 = player.model.HumanoidRootPart
-    hitbox.Parent = workspace
-    wait(0.05)
-    hitbox:Destroy()
-
+    HitDetection:MakeRectangleHitbox(entity.model, self.range, self.damage)
     wait(self.attackTime / 2 + self.cooldown)
-    player.animations.attack:Stop()
+    entity.animations.attack:Stop()
     onCooldown = false
-end
-
-function getHitbox(playerModel, range, damage)
-    local hitbox = Instance.new("Part")
-    hitbox.Transparency = 0
-    hitbox.CanCollide = false
-    hitbox.Anchored = false
-    hitbox.Size = Vector3.new(3 * (range / 100 + 1), 1, range)
-    local weld = Instance.new("WeldConstraint")
-    weld.Name = "weld"
-    weld.Part0 = hitbox
-    weld.Parent = hitbox
-
-    local function onTouch(toucher)
-        local hum = findHumanoid(toucher)
-        if toucher:IsDescendantOf(playerModel) or not hum then
-            return
-        end
-        hum:TakeDamage(damage)
-        hitbox:Destroy()
-    end
-    hitbox.Touched:Connect(onTouch)
-
-    return hitbox
-end
-
-function findHumanoid(obj)
-    local folder = obj.Parent
-    while folder.Name ~= "Workspace" do
-        if folder:FindFirstChild("Humanoid") then
-            return folder.Humanoid
-        end
-        folder = folder.Parent
-    end
-    return nil
 end
 
 return Weapon

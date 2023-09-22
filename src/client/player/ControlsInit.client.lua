@@ -5,8 +5,6 @@ local UIS = game:GetService("UserInputService")
 local playerObj = nil
 RemoteFolder.GetPlrObj.OnClientEvent:Connect(
     function(playerObj)
-        print("recieved")
-
         local ControlsClass = require(ReplicatedStorage.Classes.Entities.Player.Controls)
         local controls = ControlsClass:New({player = playerObj})
 

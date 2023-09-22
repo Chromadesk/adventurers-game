@@ -5,11 +5,9 @@ local ShieldClass = require(ReplicatedStorage.Classes.Items.Shield)
 local Class = require(ReplicatedStorage.Classes.Class)
 local Player = Class:Extend()
 
-Player._maxHealth = nil
-Player._maxSpeed = nil
-Player._name = nil
-Player.health = nil
-Player.speed = nil
+Player.maxHealth = nil
+Player.maxSpeed = nil
+Player.name = nil
 Player.weapon = nil
 Player.shield = nil
 Player.reference = nil
@@ -21,13 +19,11 @@ Player.animations = nil
 
 function Player:OnNew()
     assert(self.reference, "Player must reference a roblox player")
-    assert(self.health, "Player must have MaxHP")
-    assert(self.speed and self.speed >= 0, "Player must have at least 0 Speed")
+    assert(self.maxHealth and self.maxHealth >= 1, "Player must have at least 1 health.")
+    assert(self.maxSpeed and self.maxSpeed >= 0, "Player must have at least 0 Speed")
 
-    self._name = self.reference.name
-    self._maxHealth = self.health
-    self._maxSpeed = self.speed
-    self.model = workspace:WaitForChild(self._name)
+    self.name = self.reference.name
+    self.model = workspace:WaitForChild(self.name)
     self.humanoid = self.model.Humanoid
 
     --Server loaded animations
@@ -36,9 +32,9 @@ function Player:OnNew()
     self.animations["guard"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Guard)
 
     self.humanoid.JumpPower = 0
-    self.humanoid.WalkSpeed = self._maxSpeed
-    self.humanoid.Health = self._maxHealth
-    self.humanoid.MaxHealth = self._maxHealth
+    self.humanoid.WalkSpeed = self.maxSpeed
+    self.humanoid.Health = self.maxHealth
+    self.humanoid.MaxHealth = self.maxHealth
     self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
 
     self:EquipWeapon(WeaponClass:New({assetFolder = ReplicatedStorage.Assets.Items.Longsword}))
@@ -63,11 +59,7 @@ function Player:OnNew()
 end
 
 function Player:TakeDamage(dam)
-    self.health = self.health - dam
-    if self.health <= 0 then
-        self:OnDeath()
-        return
-    end
+    self.humanoid.Health = self.humanoid.Health - dam
 end
 
 function Player:OnDeath()

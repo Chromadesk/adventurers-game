@@ -24,7 +24,6 @@ function loadAnimations(player)
 end
 RemoteFolder.LoadAnimations.OnClientEvent:Connect(
     function(player)
-        print(player)
         loadAnimations(player)
     end
 )

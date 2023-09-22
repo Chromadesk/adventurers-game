@@ -38,12 +38,12 @@ local hitbox = nil
 function Shield:Use(player, isActive)
     if not isActive then
         player.animations.guard:Stop()
-        player.humanoid.WalkSpeed = player.speed
+        player.humanoid.WalkSpeed = player.maxSpeed
         hitbox:Destroy()
         return
     end
     player.animations.guard:Play()
-    player.humanoid.WalkSpeed = player.speed * (self.slowAmount / 100)
+    player.humanoid.WalkSpeed = player.maxSpeed * (self.slowAmount / 100)
     hitbox = getHitbox(player.model, self.range)
     hitbox.CFrame = player.model.HumanoidRootPart.CFrame
     hitbox.CFrame = hitbox.CFrame:ToWorldSpace(CFrame.new(0, 0, -2.5))

@@ -52,7 +52,7 @@ function Weapon:Use(player)
     player.animations.attack:Play()
     wait(self.attackTime / 2)
 
-    local hitbox = getHitbox(player.model, self.range)
+    local hitbox = getHitbox(player.model, self.range, self.damage)
     hitbox.CFrame = player.model.HumanoidRootPart.CFrame
     hitbox.CFrame = hitbox.CFrame:ToWorldSpace(CFrame.new(0, 0, -self.range / 2))
     hitbox.weld.Part1 = player.model.HumanoidRootPart
@@ -65,7 +65,7 @@ function Weapon:Use(player)
     onCooldown = false
 end
 
-function getHitbox(player, range)
+function getHitbox(playerModel, range, damage)
     local hitbox = Instance.new("Part")
     hitbox.Transparency = 0
     hitbox.CanCollide = false
@@ -76,26 +76,28 @@ function getHitbox(player, range)
     weld.Part0 = hitbox
     weld.Parent = hitbox
 
-    -- local function onTouch(toucher)
-    --     local hum = findHumanoid(toucher)
-    --     if toucher:IsDescendantOf(player.model) or not hum then
-    --         return
-    --     end
-    -- end
-    -- hitbox.Touched:Connect(onTouch)
+    local function onTouch(toucher)
+        local hum = findHumanoid(toucher)
+        if toucher:IsDescendantOf(playerModel) or not hum then
+            return
+        end
+        hum:TakeDamage(damage)
+        hitbox:Destroy()
+    end
+    hitbox.Touched:Connect(onTouch)
 
     return hitbox
 end
 
--- function findHumanoid(obj)
---     local folder = obj.Parent
---     while folder.Name ~= "Workspace" do
---         if folder:FindFirstChild("Humanoid") then
---             return folder:FindFirstChild("Humanoid")
---         end
---         folder = folder.Parent
---     end
---     return nil
--- end
+function findHumanoid(obj)
+    local folder = obj.Parent
+    while folder.Name ~= "Workspace" do
+        if folder:FindFirstChild("Humanoid") then
+            return folder.Humanoid
+        end
+        folder = folder.Parent
+    end
+    return nil
+end
 
 return Weapon

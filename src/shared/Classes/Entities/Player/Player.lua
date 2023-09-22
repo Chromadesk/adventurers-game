@@ -24,6 +24,7 @@ function Player:OnNew()
 
     self.name = self.reference.name
     self.model = workspace:WaitForChild(self.name)
+    self.model.Parent = workspace.PlayerCharacters
     self.humanoid = self.model.Humanoid
 
     --Server loaded animations

@@ -74,19 +74,17 @@ function World:GetEnemyList()
     return self.enemyList
 end
 
+--Will be replaced later.
 function World:Dev_SpawnEnemy(name)
     self.enemyList[name] = EnemyClass:New({name = name, assetFolder = ReplicatedStorage.Assets.Enemies[name]})
-    self.enemyList[name].humanoid.Died:Connect(
+    self.enemyList[name].model.Destroying:Connect(
         function()
-            wait(5)
-            self.enemyList[name].model:Destroy()
-            self.enemyList[name].assetFolder:Destroy()
+            wait(1)
             self.enemyList[name] = nil
         end
     )
 
-    self.enemyList[name].model.Parent = workspace.NPCs
-    self.enemyList[name].model:MoveTo(workspace.EnemySpawn.Position)
+    self.enemyList[name]:Spawn(workspace.EnemySpawn.Position)
 end
 
 return World

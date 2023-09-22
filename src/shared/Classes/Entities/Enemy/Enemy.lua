@@ -1,5 +1,6 @@
 local Class = require(game.ReplicatedStorage.Classes.Class)
 local Enemy = Class:Extend()
+local AiBehavior = require(game.ReplicatedStorage.Classes.Entities.Enemy.AiBehavior)
 
 Enemy.name = nil
 Enemy.maxHealth = nil
@@ -18,13 +19,30 @@ function Enemy:OnNew()
     self.maxHealth = self.assetFolder.Stats.Health
     self.maxSpeed = self.assetFolder.Stats.Speed
     self.humanoid = self.model.Humanoid
+
+    self.humanoid.Died:Connect(
+        function()
+            self:OnDied()
+        end
+    )
 end
 
 function Enemy:TakeDamage(dam)
     self.humanoid.Health = self.humanoid.Health - dam
 end
 
-function Enemy:OnDeath()
+function Enemy:OnDied()
+    wait(5)
+    self.model:Destroy()
+    self.assetFolder:Destroy()
+end
+
+function Enemy:Spawn(spawnPos)
+    self.model.Parent = workspace.NPCs
+    self.model:MoveTo(spawnPos)
+    wait(5)
+    local cc = AiBehavior:GetClosestPlayer(self.model)
+    print(cc)
 end
 
 return Enemy

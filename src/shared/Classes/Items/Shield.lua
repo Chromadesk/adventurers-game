@@ -22,8 +22,8 @@ function Shield:OnNew()
     self:IntializeModel()
 end
 
-function Shield:Equip(player)
-    self.assetFolder.Parent = player.model
+function Shield:Equip(entity)
+    self.assetFolder.Parent = entity.model
 end
 
 function Shield:IntializeModel()
@@ -37,16 +37,22 @@ function Shield:IntializeModel()
 end
 
 local hitbox = nil
-function Shield:Use(player, isActive)
+function Shield:Use(entity, isActive)
     if not isActive then
-        player.animations.guard:Stop()
-        player.humanoid.WalkSpeed = player.maxSpeed
+        entity.animations.guard:Stop()
+        entity.humanoid.WalkSpeed = entity.maxSpeed
         hitbox:Destroy()
+        entity.model.ArmLUpper.CanTouch = true
+        entity.model.ArmLLower.CanTouch = true
+        entity.model.HandL.CanTouch = true
         return
     end
-    player.animations.guard:Play()
-    player.humanoid.WalkSpeed = player.maxSpeed * (self.slowAmount / 100)
-    hitbox = HitDetection:MakeShieldHitbox(player.model, self.range)
+    entity.animations.guard:Play()
+    entity.humanoid.WalkSpeed = entity.maxSpeed * (self.slowAmount / 100)
+    hitbox = HitDetection:MakeShieldHitbox(entity.model, self.range)
+    entity.model.ArmLUpper.CanTouch = false
+    entity.model.ArmLLower.CanTouch = false
+    entity.model.HandL.CanTouch = false
 end
 
 return Shield

@@ -60,6 +60,10 @@ function Player:EquipShield(shield)
     shield:Equip(self)
 end
 
+function Player:HandleHit(contact)
+    --placeholder
+end
+
 function Player:InitializeHumanoid()
     self.humanoid.JumpPower = 0
     self.humanoid.WalkSpeed = self.maxSpeed

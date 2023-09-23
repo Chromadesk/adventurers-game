@@ -2,6 +2,7 @@ local Class = require(game.ReplicatedStorage.Classes.Class)
 local Enemy = Class:Extend()
 local AiBehaviorClass = require(game.ReplicatedStorage.Classes.Entities.Enemy.AiBehavior)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
 
 Enemy.name = nil
 Enemy.maxHealth = nil
@@ -11,6 +12,8 @@ Enemy.animator = nil
 Enemy.humanoid = nil
 Enemy.AiBehavior = nil
 Enemy.animations = nil
+Enemy.weapon = nil
+Enemy.shield = nil
 
 function Enemy:OnNew()
     assert(self.name, "Enemy must have a name.")
@@ -30,6 +33,8 @@ function Enemy:OnNew()
             self:OnDied()
         end
     )
+
+    self:EquipWeapon(WeaponClass:New({assetFolder = ReplicatedStorage.Assets.Items.Longsword}))
 end
 
 function Enemy:TakeDamage(dam)
@@ -40,6 +45,26 @@ function Enemy:OnDied()
     wait(5)
     self.model:Destroy()
     self.assetFolder:Destroy()
+end
+
+function Enemy:HandleHit(contact)
+    if contact.Name == "ShieldHitbox" then
+        print("stunnin cuz i hit da sheld")
+        self.AiBehavior:DoStun(2.5)
+        return
+    end
+end
+
+function Enemy:EquipWeapon(weapon)
+    self.weapon = weapon
+
+    weapon:Equip(self)
+end
+
+function Enemy:EquipShield(shield)
+    self.shield = shield
+
+    shield:Equip(self)
 end
 
 function Enemy:Spawn(spawnPos)

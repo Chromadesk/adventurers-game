@@ -7,11 +7,13 @@ local AiBehavior = Class:Extend()
 AiBehavior.type = nil
 AiBehavior.NPC = nil
 AiBehavior.FollowPart = nil
-
+AiBehavior.isNPCStunned = nil
+AiBehavior.attackChance = nil
 AiBehavior.FollowLimit = nil
 
 function AiBehavior:OnNew()
     assert(self.NPC, "AiBehavior must have an Enemy Class object.")
+    self.NPC.AiBehavior = self
     self:SetMeleeAi()
 end
 
@@ -55,7 +57,8 @@ function AiBehavior:FollowPlayer()
 
     local update = 0
     local updateTime = 16 / self.NPC.humanoid.WalkSpeed
-    while self.NPC.humanoid.Health > 0 and character and wait() do
+    while self.NPC.humanoid.Health > 0 and character.Humanoid.Health > 0 and wait() do
+        character, distance = self:GetClosestPlayer(self.NPC.model)
         if update >= updateTime or GetTargetDistance(self.NPC.model.HumanoidRootPart, self.FollowPart) <= 1 then
             self.FollowPart.CFrame =
                 character.HumanoidRootPart.CFrame * CFrame.new(math.random(-10, 10), 0, math.random(-10, 10))
@@ -63,6 +66,9 @@ function AiBehavior:FollowPlayer()
         end
         self:OrientNPC(self.NPC.model, character.HumanoidRootPart.Position)
         self.NPC.humanoid:MoveTo(self.FollowPart.Position)
+        if distance <= self.NPC.weapon.range then
+            self:TryAttack()
+        end
         update = update + 0.05
     end
     self:Idle()
@@ -80,6 +86,23 @@ function AiBehavior:Idle()
     until character
     self:FollowPlayer()
     return
+end
+
+function AiBehavior:TryAttack()
+    if self.isStunned or math.random(0, 100) < self.attackChance then
+        return
+    end
+
+    self.NPC.weapon:Use(self.NPC)
+end
+
+function AiBehavior:DoStun(time)
+    self.isStunned = true
+    self.NPC.humanoid.WalkSpeed = 0
+    wait(time)
+    self.isStunned = false
+    self.NPC.humanoid.WalkSpeed = self.NPC.maxSpeed
+    self:Idle()
 end
 
 -- function AiBehavior:Stalk()
@@ -128,7 +151,8 @@ function AiBehavior:SetupFollowPart()
 end
 
 function AiBehavior:SetMeleeAi()
-    AiBehavior.FollowLimit = 10
+    self.FollowLimit = 10
+    self.attackChance = 30
 
     self:SetupFollowPart()
     self:Idle()

@@ -53,7 +53,7 @@ function Weapon:Use(entity)
     onCooldown = true
     entity.animations.attack:Play()
     wait(self.attackTime / 2)
-    HitDetection:MakeRectangleHitbox(entity.model, self.range, self.damage)
+    HitDetection:MakeRectangleHitbox(entity, self.range, self.damage)
     wait(self.attackTime / 2 + self.cooldown)
     entity.animations.attack:Stop()
     onCooldown = false

@@ -54,7 +54,7 @@ function AiBehavior:FollowPlayer()
     local character, distance = self:GetClosestPlayer(self.NPC.model)
 
     local update = 0
-    local updateTime = 1
+    local updateTime = 16 / self.NPC.humanoid.WalkSpeed
     while self.NPC.humanoid.Health > 0 and character and wait() do
         if update >= updateTime or GetTargetDistance(self.NPC.model.HumanoidRootPart, self.FollowPart) <= 1 then
             self.FollowPart.CFrame =
@@ -82,41 +82,41 @@ function AiBehavior:Idle()
     return
 end
 
-function AiBehavior:Stalk()
-    local maxDistance = self.FollowLimit - math.random(1, 8)
-    local currentAngle = 0
-    local secsToRedirect = math.random(1, 5)
-    local redirectCount = 0
-    local rotationSpeed = self.NPC.humanoid.WalkSpeed * 0.1
-    local direction = math.round(math.random(0, 1))
-    local canAttack = false
-    while wait(0.001) do
-        local character, distance, angle = self:GetClosestPlayer(self.NPC.model)
-        if distance > maxDistance then
-            self:FollowPlayer()
-            return
-        end
-        self.FollowPart.CFrame =
-            CFrame.new(character.HumanoidRootPart.Position) * CFrame.Angles(0, math.rad(currentAngle), 0) *
-            CFrame.new(0, 0, maxDistance)
+-- function AiBehavior:Stalk()
+--     local maxDistance = self.FollowLimit - math.random(1, 8)
+--     local currentAngle = 0
+--     local secsToRedirect = math.random(1, 5)
+--     local redirectCount = 0
+--     local rotationSpeed = self.NPC.humanoid.WalkSpeed * 0.1
+--     local direction = math.round(math.random(0, 1))
+--     local canAttack = false
+--     while wait(0.001) do
+--         local character, distance, angle = self:GetClosestPlayer(self.NPC.model)
+--         if distance > maxDistance then
+--             self:FollowPlayer()
+--             return
+--         end
+--         self.FollowPart.CFrame =
+--             CFrame.new(character.HumanoidRootPart.Position) * CFrame.Angles(0, math.rad(currentAngle), 0) *
+--             CFrame.new(0, 0, maxDistance)
 
-        if redirectCount >= secsToRedirect then -- If enough time has passed while stalking, change directions.
-            rotationSpeed = 0 - rotationSpeed
-            redirectCount = 0
-            secsToRedirect = math.random(1, 5) -- set a new time to change directions
-            direction = 0 - direction
-        end
-        if redirectCount > 2 then -- If enough time has passed, start rolling to randomly attack.
-            canAttack = true
-        end
-        currentAngle = currentAngle + rotationSpeed
+--         if redirectCount >= secsToRedirect then -- If enough time has passed while stalking, change directions.
+--             rotationSpeed = 0 - rotationSpeed
+--             redirectCount = 0
+--             secsToRedirect = math.random(1, 5) -- set a new time to change directions
+--             direction = 0 - direction
+--         end
+--         if redirectCount > 2 then -- If enough time has passed, start rolling to randomly attack.
+--             canAttack = true
+--         end
+--         currentAngle = currentAngle + rotationSpeed
 
-        self.NPC.humanoid:MoveTo(self.FollowPart.Position)
-        redirectCount = redirectCount + 0.05
-    end
-    self:Idle()
-    return
-end
+--         self.NPC.humanoid:MoveTo(self.FollowPart.Position)
+--         redirectCount = redirectCount + 0.05
+--     end
+--     self:Idle()
+--     return
+-- end
 
 function AiBehavior:SetupFollowPart()
     self.FollowPart = Instance.new("Part")

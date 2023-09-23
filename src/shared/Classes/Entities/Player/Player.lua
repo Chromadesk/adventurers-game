@@ -32,31 +32,12 @@ function Player:OnNew()
     self.animations["attack"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Attack)
     self.animations["guard"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Guard)
 
-    self.humanoid.JumpPower = 0
-    self.humanoid.WalkSpeed = self.maxSpeed
-    self.humanoid.Health = self.maxHealth
-    self.humanoid.MaxHealth = self.maxHealth
-    self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
+    self:InitializeHumanoid()
 
     self:EquipWeapon(WeaponClass:New({assetFolder = ReplicatedStorage.Assets.Items.Longsword}))
     self:EquipShield(ShieldClass:New({assetFolder = ReplicatedStorage.Assets.Items.Shield}))
 
-    self.attackRemote = Instance.new("RemoteEvent")
-    self.attackRemote.Name = "Attack"
-    self.attackRemote.Parent = self.model
-    self.attackRemote.OnServerEvent:Connect(
-        function(player)
-            self.weapon:Use(self)
-        end
-    )
-    self.guardRemote = Instance.new("RemoteEvent")
-    self.guardRemote.Name = "Guard"
-    self.guardRemote.Parent = self.model
-    self.guardRemote.OnServerEvent:Connect(
-        function(player, isActive)
-            self.shield:Use(self, isActive)
-        end
-    )
+    self:InitializeRemotes()
 end
 
 function Player:TakeDamage(dam)
@@ -77,6 +58,34 @@ function Player:EquipShield(shield)
     self.shield = shield
 
     shield:Equip(self)
+end
+
+function Player:InitializeHumanoid()
+    self.humanoid.JumpPower = 0
+    self.humanoid.WalkSpeed = self.maxSpeed
+    self.humanoid.Health = self.maxHealth
+    self.humanoid.MaxHealth = self.maxHealth
+    self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
+    self.humanoid.AutoRotate = false
+end
+
+function Player:InitializeRemotes()
+    self.attackRemote = Instance.new("RemoteEvent")
+    self.attackRemote.Name = "Attack"
+    self.attackRemote.Parent = self.model
+    self.attackRemote.OnServerEvent:Connect(
+        function(player)
+            self.weapon:Use(self)
+        end
+    )
+    self.guardRemote = Instance.new("RemoteEvent")
+    self.guardRemote.Name = "Guard"
+    self.guardRemote.Parent = self.model
+    self.guardRemote.OnServerEvent:Connect(
+        function(player, isActive)
+            self.shield:Use(self, isActive)
+        end
+    )
 end
 
 return Player

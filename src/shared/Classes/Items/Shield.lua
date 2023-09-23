@@ -1,6 +1,8 @@
 local Class = require(game:GetService("ReplicatedStorage").Classes.Class)
 local Shield = Class:Extend()
 
+local HitDetection = require(game:GetService("ReplicatedStorage").Classes.HitDetection)
+
 Shield.assetFolder = nil
 Shield.statsFolder = nil
 Shield.slowAmount = nil
@@ -44,25 +46,7 @@ function Shield:Use(player, isActive)
     end
     player.animations.guard:Play()
     player.humanoid.WalkSpeed = player.maxSpeed * (self.slowAmount / 100)
-    hitbox = getHitbox(player.model, self.range)
-    hitbox.CFrame = player.model.HumanoidRootPart.CFrame
-    hitbox.CFrame = hitbox.CFrame:ToWorldSpace(CFrame.new(0, 0, -2.5))
-    hitbox.weld.Part1 = player.model.HumanoidRootPart
-    hitbox.Parent = workspace
-end
-
-function getHitbox(player)
-    local hitbox = Instance.new("Part")
-    hitbox.Transparency = 0
-    hitbox.CanCollide = false
-    hitbox.Anchored = false
-    hitbox.Size = Vector3.new(4, 8, 1)
-    local weld = Instance.new("WeldConstraint")
-    weld.Name = "weld"
-    weld.Part0 = hitbox
-    weld.Parent = hitbox
-
-    return hitbox
+    hitbox = HitDetection:MakeShieldHitbox(player.model, self.range)
 end
 
 return Shield

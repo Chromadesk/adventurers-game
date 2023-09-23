@@ -7,7 +7,7 @@ end
 
 --Extends outward quickly so possible conflicts such as hitting a shield and player at the same time don't happen
 function HitDetection:MakeRectangleHitbox(model, range, damage)
-    local hitbox = getHitbox(model, range, damage)
+    local hitbox = GetHitbox(model, Vector3.new(3 * (range / 100 + 1), 1, 0.1), damage)
     hitbox.CFrame = model.HumanoidRootPart.CFrame
     hitbox.CFrame = hitbox.CFrame:ToWorldSpace(CFrame.new(0, 0, -range / 2))
     hitbox.weld.Part1 = model.HumanoidRootPart
@@ -16,37 +16,53 @@ function HitDetection:MakeRectangleHitbox(model, range, damage)
     local tweenGoal = {Size = hitbox.Size + Vector3.new(0, 0, range - 0.1)}
     local tween = TweenService:Create(hitbox, tweenInfo, tweenGoal)
 
-    hitbox.Parent = workspace
+    hitbox.Parent = model
     tween:Play()
     wait(0.05)
     hitbox:Destroy()
 end
 
-function getHitbox(playerModel, range, damage)
+function HitDetection:MakeShieldHitbox(model, range)
+    local hitbox = GetHitbox(model, Vector3.new(4, 8, 1))
+    hitbox.CFrame = model.HumanoidRootPart.CFrame
+    hitbox.CFrame = hitbox.CFrame:ToWorldSpace(CFrame.new(0, 0, -2.5))
+    hitbox.weld.Part1 = model.HumanoidRootPart
+
+    hitbox.Parent = model
+    return hitbox
+end
+
+function GetHitbox(playerModel, size, damage)
     local hitbox = Instance.new("Part")
     hitbox.Transparency = 0
     hitbox.CanCollide = false
     hitbox.Anchored = false
-    hitbox.Size = Vector3.new(3 * (range / 100 + 1), 1, 0.1)
+    hitbox.Size = size
+
     local weld = Instance.new("WeldConstraint")
     weld.Name = "weld"
     weld.Part0 = hitbox
     weld.Parent = hitbox
 
-    local function onTouch(toucher)
-        local hum = findHumanoid(toucher)
-        if toucher:IsDescendantOf(playerModel) or not hum then
-            return
+    if damage then
+        local function onTouch(toucher)
+            local hum = FindHumanoid(toucher)
+            if CheckIgnoreHits(toucher) then
+                return
+            end
+            if toucher:IsDescendantOf(playerModel) or not hum then
+                return
+            end
+            hum:TakeDamage(damage)
+            hitbox:Destroy()
         end
-        hum:TakeDamage(damage)
-        hitbox:Destroy()
+        hitbox.Touched:Connect(onTouch)
     end
-    hitbox.Touched:Connect(onTouch)
 
     return hitbox
 end
 
-function findHumanoid(obj)
+function FindHumanoid(obj)
     local folder = obj.Parent
     while folder.Name ~= "Workspace" do
         if folder:FindFirstChild("Humanoid") then
@@ -55,6 +71,19 @@ function findHumanoid(obj)
         folder = folder.Parent
     end
     return nil
+end
+
+local ignoreHits = {
+    "FollowPart",
+    "Hitbox"
+}
+function CheckIgnoreHits(partName)
+    for _, v in pairs(ignoreHits) do
+        if partName == v then
+            return true
+        end
+    end
+    return false
 end
 
 return HitDetection

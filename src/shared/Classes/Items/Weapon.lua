@@ -45,18 +45,18 @@ function Weapon:IntializeModel()
     handle.Transparency = 1
 end
 
-local onCooldown = false
+Weapon.onCooldown = false
 function Weapon:Use(entity)
-    if onCooldown then
+    if self.onCooldown then
         return
     end
-    onCooldown = true
+    self.onCooldown = true
     entity.animations.attack:Play()
     wait(self.attackTime / 2)
     HitDetection:MakeRectangleHitbox(entity, self.range, self.damage)
     wait(self.attackTime / 2 + self.cooldown)
     entity.animations.attack:Stop()
-    onCooldown = false
+    self.onCooldown = false
 end
 
 return Weapon

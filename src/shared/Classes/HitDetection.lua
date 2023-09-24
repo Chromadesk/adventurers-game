@@ -1,6 +1,7 @@
 local Class = require(game:GetService("ReplicatedStorage").Classes.Class)
 local HitDetection = Class:Extend()
 local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
 
 function HitDetection:OnNew()
 end
@@ -35,7 +36,7 @@ end
 
 function GetHitbox(entity, size, damage)
     local hitbox = Instance.new("Part")
-    hitbox.Transparency = 0.5
+    hitbox.Transparency = 1
     hitbox.CanCollide = false
     hitbox.Anchored = false
     hitbox.Size = size
@@ -54,13 +55,11 @@ function GetHitbox(entity, size, damage)
                 return
             end
             debounce = true
-            if IsNotHittingShield(hitbox) then
-                print("me hurt u!!")
+            if IsNotHittingShield(hitbox) and toucher.Name ~= "ShieldHitbox" then
+                hum:TakeDamage(damage)
             end
             entity:HandleHit(toucher)
-            print(toucher)
             hitbox:Destroy()
-            print("hitbox destroyed")
         end
         hitbox.Touched:Connect(onTouch)
     end
@@ -79,8 +78,8 @@ function FindHumanoid(obj)
     return nil
 end
 
-function IsNotHittingShield(part)
-    for _, v in pairs(workspace:GetPartsInPart(part)) do
+function IsNotHittingShield(hitbox)
+    for _, v in pairs(workspace:GetPartsInPart(hitbox)) do
         if v.Name == "ShieldHitbox" then
             return false
         end

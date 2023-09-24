@@ -57,11 +57,11 @@ function AiBehavior:FollowPlayer()
 
     local update = 0
     local updateTime = 16 / self.NPC.humanoid.WalkSpeed
-    while self.NPC.humanoid.Health > 0 and character.Humanoid.Health > 0 and wait() do
-        character, distance = self:GetClosestPlayer(self.NPC.model)
+    while wait() and self.NPC.humanoid.Health > 0 and character and character.Humanoid.Health > 0 do
         if update >= updateTime or GetTargetDistance(self.NPC.model.HumanoidRootPart, self.FollowPart) <= 1 then
             self.FollowPart.CFrame =
-                character.HumanoidRootPart.CFrame * CFrame.new(math.random(-10, 10), 0, math.random(-10, 10))
+                character.HumanoidRootPart.CFrame *
+                CFrame.new(math.random(-10, 10), 0, -math.random(self.NPC.weapon.range - 1, self.NPC.weapon.range + 5))
             update = 0
         end
         self:OrientNPC(self.NPC.model, character.HumanoidRootPart.Position)
@@ -70,6 +70,7 @@ function AiBehavior:FollowPlayer()
             self:TryAttack()
         end
         update = update + 0.05
+        character, distance = self:GetClosestPlayer(self.NPC.model)
     end
     self:Idle()
     return

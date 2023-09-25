@@ -1,7 +1,6 @@
 local Class = require(game:GetService("ReplicatedStorage").Classes.Class)
 local HitDetection = Class:Extend()
 local TweenService = game:GetService("TweenService")
-local Debris = game:GetService("Debris")
 
 function HitDetection:OnNew()
 end

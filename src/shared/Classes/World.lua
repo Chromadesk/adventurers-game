@@ -3,7 +3,7 @@ local World = Class:Extend()
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PlayerService = game:GetService("Players")
-local PlayerClass = require(ReplicatedStorage.Classes.Entities.Player.Player)
+local GamePlayerClass = require(ReplicatedStorage.Classes.Entities.Player.GamePlayer)
 local EnemyClass = require(ReplicatedStorage.Classes.Entities.Enemy.Enemy)
 local RemoteFolder = ReplicatedStorage.Remotes
 
@@ -19,9 +19,14 @@ end
 function World:InitializePlayerList()
     PlayerService.PlayerAdded:Connect(
         function(player)
-            self.playerList[player.Name] = PlayerClass:New({reference = player, maxHealth = 100, maxSpeed = 16})
             print(player.Name .. " joined.")
-            RemoteFolder.LoadAnimations:FireClient(player, self.playerList[player.Name])
+            player.CharacterAdded:Connect(
+                function(a)
+                    self.playerList[player.Name] =
+                        GamePlayerClass:New({reference = player, maxHealth = 100, maxSpeed = 16})
+                    RemoteFolder.LoadAnimations:FireClient(player, self.playerList[player.Name])
+                end
+            )
         end
     )
     PlayerService.PlayerRemoving:Connect(

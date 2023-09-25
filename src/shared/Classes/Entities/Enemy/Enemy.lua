@@ -1,8 +1,10 @@
 local Class = require(game.ReplicatedStorage.Classes.Class)
 local Enemy = Class:Extend()
-local AiBehaviorClass = require(game.ReplicatedStorage.Classes.Entities.Enemy.AiBehavior)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local AiBehaviorClass = require(game.ReplicatedStorage.Classes.Entities.Enemy.AiBehavior)
 local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
+local HitDetection = require(game:GetService("ReplicatedStorage").Classes.HitDetection)
 
 Enemy.name = nil
 Enemy.maxHealth = nil
@@ -34,6 +36,7 @@ function Enemy:OnNew()
         end
     )
 
+    HitDetection:InitializeCollisionBox(self.model)
     self:EquipWeapon(WeaponClass:New({assetFolder = ReplicatedStorage.Assets.Items.Longsword}))
 end
 
@@ -49,8 +52,7 @@ end
 
 function Enemy:HandleHit(contact)
     if contact.Name == "ShieldHitbox" then
-        print("stunnin cuz i hit da sheld")
-        self.AiBehavior:DoStun(2.5)
+        self.AiBehavior:DoStun(2)
         return
     end
 end
@@ -98,6 +100,24 @@ function Enemy:LoadAnimations()
         end
     )
     self.animations.idle:Play()
+end
+
+function Enemy:InitializeCollisionBox()
+    local colbox = Instance.new("Part")
+    colbox.CollisionGroup = "Entity"
+    colbox.Shape = "Cylinder"
+    colbox.Size = Vector3.new(5, 5, 5)
+    colbox.Transparency = 0.7
+    colbox.Anchored = false
+    colbox.CanTouch = false
+    colbox.Name = "CollisionBox"
+    colbox.Parent = self.model
+    colbox.Position = self.model.HumanoidRootPart.Position
+    colbox.Orientation = Vector3.new(0, 0, 90)
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = colbox
+    weld.Part1 = self.model.HumanoidRootPart
+    weld.Parent = colbox
 end
 
 return Enemy

@@ -34,6 +34,25 @@ function HitDetection:MakeShieldHitbox(model, range)
     return hitbox
 end
 
+function HitDetection:InitializeCollisionBox(character)
+    local colbox = Instance.new("Part")
+    colbox.CollisionGroup = "Entity"
+    colbox.Shape = "Cylinder"
+    colbox.Size = Vector3.new(5, 5, 5)
+    colbox.Transparency = 1
+    colbox.Anchored = false
+    colbox.CanTouch = false
+    colbox.Name = "CollisionBox"
+    colbox.Parent = character
+    colbox.Position = character.HumanoidRootPart.Position
+    colbox.Orientation = Vector3.new(0, 0, 90)
+    colbox.CFrame = colbox.CFrame:ToWorldSpace(CFrame.new(0, 0, 0.5))
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = colbox
+    weld.Part1 = character.HumanoidRootPart
+    weld.Parent = colbox
+end
+
 function GetHitbox(entity, size, damage)
     local hitbox = Instance.new("Part")
     hitbox.Transparency = 1

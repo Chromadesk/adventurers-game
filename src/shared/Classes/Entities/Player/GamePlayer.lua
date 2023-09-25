@@ -1,26 +1,28 @@
 --TODO make camera methods!!
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Class = require(ReplicatedStorage.Classes.Class)
+local GamePlayer = Class:Extend()
+
 local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
 local ShieldClass = require(ReplicatedStorage.Classes.Items.Shield)
-local Class = require(ReplicatedStorage.Classes.Class)
-local Player = Class:Extend()
+local HitDetection = require(game:GetService("ReplicatedStorage").Classes.HitDetection)
 
-Player.maxHealth = nil
-Player.maxSpeed = nil
-Player.name = nil
-Player.weapon = nil
-Player.shield = nil
-Player.reference = nil
-Player.model = nil
-Player.humanoid = nil
-Player.attackRemote = nil
-Player.guardRemote = nil
-Player.animations = nil
+GamePlayer.maxHealth = nil
+GamePlayer.maxSpeed = nil
+GamePlayer.name = nil
+GamePlayer.weapon = nil
+GamePlayer.shield = nil
+GamePlayer.reference = nil
+GamePlayer.model = nil
+GamePlayer.humanoid = nil
+GamePlayer.attackRemote = nil
+GamePlayer.guardRemote = nil
+GamePlayer.animations = nil
 
-function Player:OnNew()
-    assert(self.reference, "Player must reference a roblox player")
-    assert(self.maxHealth and self.maxHealth >= 1, "Player must have at least 1 health.")
-    assert(self.maxSpeed and self.maxSpeed >= 0, "Player must have at least 0 Speed")
+function GamePlayer:OnNew()
+    assert(self.reference, "GamePlayer must reference a roblox player")
+    assert(self.maxHealth and self.maxHealth >= 1, "GamePlayer must have at least 1 health.")
+    assert(self.maxSpeed and self.maxSpeed >= 0, "GamePlayer must have at least 0 Speed")
 
     self.name = self.reference.name
     self.model = workspace:WaitForChild(self.name)
@@ -33,6 +35,7 @@ function Player:OnNew()
     self.animations["guard"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Guard)
 
     self:InitializeHumanoid()
+    HitDetection:InitializeCollisionBox(self.model)
 
     self:EquipWeapon(WeaponClass:New({assetFolder = ReplicatedStorage.Assets.Items.Longsword}))
     self:EquipShield(ShieldClass:New({assetFolder = ReplicatedStorage.Assets.Items.Shield}))
@@ -40,31 +43,31 @@ function Player:OnNew()
     self:InitializeRemotes()
 end
 
-function Player:TakeDamage(dam)
+function GamePlayer:TakeDamage(dam)
     self.humanoid.Health = self.humanoid.Health - dam
 end
 
-function Player:OnDeath()
+function GamePlayer:OnDeath()
     --placeholder
 end
 
-function Player:EquipWeapon(weapon)
+function GamePlayer:EquipWeapon(weapon)
     self.weapon = weapon
 
     weapon:Equip(self)
 end
 
-function Player:EquipShield(shield)
+function GamePlayer:EquipShield(shield)
     self.shield = shield
 
     shield:Equip(self)
 end
 
-function Player:HandleHit(contact)
+function GamePlayer:HandleHit(contact)
     --placeholder
 end
 
-function Player:InitializeHumanoid()
+function GamePlayer:InitializeHumanoid()
     self.humanoid.JumpPower = 0
     self.humanoid.WalkSpeed = self.maxSpeed
     self.humanoid.Health = self.maxHealth
@@ -73,7 +76,7 @@ function Player:InitializeHumanoid()
     self.humanoid.AutoRotate = false
 end
 
-function Player:InitializeRemotes()
+function GamePlayer:InitializeRemotes()
     self.attackRemote = Instance.new("RemoteEvent")
     self.attackRemote.Name = "Attack"
     self.attackRemote.Parent = self.model
@@ -92,4 +95,4 @@ function Player:InitializeRemotes()
     )
 end
 
-return Player
+return GamePlayer

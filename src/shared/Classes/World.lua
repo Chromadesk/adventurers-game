@@ -5,6 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PlayerService = game:GetService("Players")
 local GamePlayerClass = require(ReplicatedStorage.Classes.Entities.Player.GamePlayer)
 local EnemyClass = require(ReplicatedStorage.Classes.Entities.Enemy.Enemy)
+local Map = require(ReplicatedStorage.Classes.Map.Map)
 local RemoteFolder = ReplicatedStorage.Remotes
 
 --All lists are filled with class objects, not roblox objects
@@ -14,7 +15,7 @@ World.enemyList = {}
 function World:OnNew()
     self:RemoveRegen()
     self:InitializePlayerList()
-    self:Dev_SpawnEnemy("Bandit")
+    Map:Generate()
 end
 function World:InitializePlayerList()
     PlayerService.PlayerAdded:Connect(

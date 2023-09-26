@@ -1,5 +1,5 @@
 {
-  "name": "End Of Day",
+  "name": "Adventurer Game",
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {

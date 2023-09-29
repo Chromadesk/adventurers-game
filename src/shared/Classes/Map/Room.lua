@@ -3,28 +3,23 @@ local Room = Class:Extend()
 
 local EnemyClass = require(game.ReplicatedStorage.Classes.Entities.Enemy.Enemy)
 
-Room.name = nil
-Room.model = nil
-Room.enterDoor = nil
-Room.exitDoor = nil
-Room.isSpawnRoom = false
-Room.enemies = {}
-
 function Room:OnNew()
     assert(self.model, "Room requires a room model")
     assert(self.model:FindFirstChild("EnterDoor", true), "Room requires an EnterDoor")
     assert(self.model:FindFirstChild("ExitDoor", true), "Room requires an ExitDoor")
+    assert(self.index, "Room must have an index.")
 
     self.model = self.model:Clone()
     self.name = self.model.Name
     self.enterDoor = self.model:FindFirstChild("EnterDoor", true)
     self.exitDoor = self.model:FindFirstChild("ExitDoor", true)
+    self.enemies = {}
+
+    self.model.Roof.Transparency = 0.3
 
     if self.isSpawnRoom then
         self:InitializePlayerSpawns()
     end
-
-    self:InitializeDoors()
 end
 
 --TODO: Fix this, spawns should disable when they are inside other blocks
@@ -38,45 +33,44 @@ function Room:InitializePlayerSpawns()
             i.Enabled = false
         end
     end
-end
-
-function Room:InitializeDoors()
-    self.enterDoor.CanCollide = false
-    self.enterDoor.Transparency = 1
-
-    -- function weld(part)
-    -- local weld = Instance.new("WeldConstraint")
-    -- weld.Part0 = part
-    -- weld.Part1 =
-    -- end
+    self.model.Roof.Transparency = 1
 end
 
 function Room:SpawnEnemies()
-    local i = 1
     if not self.model:FindFirstChild("EnemySpawns") then
         return
     end
 
+    local i = 1
     for _, v in pairs(self.model.EnemySpawns:GetChildren()) do
+        v.Transparency = 1
+        v.CanCollide = false
         if #self.enemies < 1 or math.random(1, 100) <= 60 then
-            v.Transparency = 1
-            v.CanCollide = false
-
             self.enemies[i] =
                 EnemyClass:New({name = "Bandit", assetFolder = game.ReplicatedStorage.Assets.Enemies["Bandit"]})
-            print(self.enemies)
 
-            self.enemies[i].model.Destroying:Connect(
+            self.enemies[i].humanoid.Died:Connect(
                 function()
-                    wait(1)
+                    print(i)
                     self.enemies[i] = nil
+                    print(self.enemies)
                 end
             )
 
             self.enemies[i]:Spawn(v.Position)
-            print("spawned enemy")
         end
         i = i + 1
+    end
+end
+
+function Room:Unlock()
+    self.model.Roof.Transparency = 1
+    for _, v in pairs(self.enemies) do
+        task.spawn(
+            function()
+                v.AiBehavior:FollowPlayer()
+            end
+        )
     end
 end
 

@@ -4,16 +4,16 @@
 local Class = require(game.ReplicatedStorage.Classes.Class)
 local AiBehavior = Class:Extend()
 
-AiBehavior.type = nil
-AiBehavior.NPC = nil
-AiBehavior.FollowPart = nil
-AiBehavior.isNPCStunned = nil
-AiBehavior.attackChance = nil
-AiBehavior.FollowLimit = nil
-
 function AiBehavior:OnNew()
     assert(self.NPC, "AiBehavior must have an Enemy Class object.")
+
     self.NPC.AiBehavior = self
+    self.type = nil
+    self.FollowPart = nil
+    self.isNPCStunned = nil
+    self.attackChance = nil
+    self.FollowLimit = nil
+
     self:SetMeleeAi()
 end
 
@@ -77,15 +77,8 @@ function AiBehavior:FollowPlayer()
 end
 
 function AiBehavior:Idle()
-    if self.NPC.humanoid.Health <= 0 then
-        return
-    end
     self.NPC.humanoid.WalkSpeed = self.NPC.maxSpeed * 0.5
-    repeat
-        local character = self:GetClosestPlayer(self.NPC.model)
-        wait(0.1)
-    until character
-    self:FollowPlayer()
+    --do stuff
     return
 end
 
@@ -103,7 +96,7 @@ function AiBehavior:DoStun(time)
     wait(time)
     self.isStunned = false
     self.NPC.humanoid.WalkSpeed = self.NPC.maxSpeed
-    self:Idle()
+    self:FollowPlayer()
 end
 
 function AiBehavior:SetupFollowPart()

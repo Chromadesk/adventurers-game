@@ -6,17 +6,6 @@ local AiBehaviorClass = require(ReplicatedStorage.Classes.Entities.Enemy.AiBehav
 local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
 local HitDetection = require(ReplicatedStorage.Classes.HitDetection)
 
-Enemy.name = nil
-Enemy.maxHealth = nil
-Enemy.maxSpeed = nil
-Enemy.model = nil
-Enemy.animator = nil
-Enemy.humanoid = nil
-Enemy.AiBehavior = nil
-Enemy.animations = nil
-Enemy.weapon = nil
-Enemy.shield = nil
-
 function Enemy:OnNew()
     assert(self.name, "Enemy must have a name.")
     assert(self.assetFolder, "Enemy must have an assetFolder.")
@@ -29,6 +18,10 @@ function Enemy:OnNew()
     self.animator = self.humanoid.Animator
     self.maxHealth = self.assetFolder.Stats.Health.Value
     self.maxSpeed = self.assetFolder.Stats.Speed.Value
+    self.AiBehavior = nil
+    self.animations = {}
+    self.weapon = nil
+    self.shield = nil
 
     self.humanoid.Died:Connect(
         function()
@@ -81,7 +74,6 @@ function Enemy:Spawn(spawnPos)
 end
 
 function Enemy:LoadAnimations()
-    self.animations = {}
     game:GetService("RunService").Stepped:Wait()
     self.animations["move"] = self.animator:LoadAnimation(ReplicatedStorage.Assets.Animations.Move)
     self.animations["idle"] = self.animator:LoadAnimation(ReplicatedStorage.Assets.Animations.Idle)

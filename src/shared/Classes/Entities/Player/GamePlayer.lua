@@ -74,6 +74,7 @@ function GamePlayer:InitializeHumanoid()
     self.humanoid.MaxHealth = self.maxHealth
     self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
     self.humanoid.AutoRotate = false
+    self.humanoid.MaxSlopeAngle = 0
 end
 
 function GamePlayer:InitializeRemotes()

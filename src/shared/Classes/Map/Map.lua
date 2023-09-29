@@ -13,23 +13,25 @@ end
 
 function Map:Generate()
     self.rooms = {}
-    local i = 1
+    local i = 2
+    self.rooms[1] = RoomClass:New({model = GetRandomRoom(), isSpawnRoom = true})
+    Map:AddRoom(self.rooms[1])
     while #self.rooms < 5 do
         self.rooms[i] = RoomClass:New({model = GetRandomRoom()})
         Map:AddRoom(self.rooms[i])
+        self.rooms[i]:SpawnEnemies()
         i = i + 1
     end
-    print(self.rooms)
 end
 
 function GetRandomRoom()
-    local r = RoomAssets:WaitForChild("Miner Guild"):GetChildren()
-    return r[math.round(math.random(1, #r))]
+    local list = RoomAssets:WaitForChild("Miner Guild"):GetChildren()
+    return list[math.round(math.random(1, #list))]
 end
 
 function Map:AddRoom(room)
-    room.model.Parent = workspace
-    room.model:MoveTo(self.placePart.Position)
+    room.model.Parent = workspace.Map
+    room.model:SetPrimaryPartCFrame(self.placePart.CFrame)
     self.placePart.Position = self.placePart.Position + Vector3.new(0, 0, 50)
 end
 

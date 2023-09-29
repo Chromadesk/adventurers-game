@@ -2,9 +2,9 @@ local Class = require(game.ReplicatedStorage.Classes.Class)
 local Enemy = Class:Extend()
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local AiBehaviorClass = require(game.ReplicatedStorage.Classes.Entities.Enemy.AiBehavior)
+local AiBehaviorClass = require(ReplicatedStorage.Classes.Entities.Enemy.AiBehavior)
 local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
-local HitDetection = require(game:GetService("ReplicatedStorage").Classes.HitDetection)
+local HitDetection = require(ReplicatedStorage.Classes.HitDetection)
 
 Enemy.name = nil
 Enemy.maxHealth = nil
@@ -73,7 +73,11 @@ function Enemy:Spawn(spawnPos)
     self.model.Parent = workspace.NPCs
     self:LoadAnimations()
     self.model:MoveTo(spawnPos)
-    self.AiBehavior = AiBehaviorClass:New({NPC = self})
+    task.spawn(
+        function()
+            AiBehaviorClass:New({NPC = self})
+        end
+    )
 end
 
 function Enemy:LoadAnimations()

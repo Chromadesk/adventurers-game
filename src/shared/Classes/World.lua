@@ -4,19 +4,18 @@ local World = Class:Extend()
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PlayerService = game:GetService("Players")
 local GamePlayerClass = require(ReplicatedStorage.Classes.Entities.Player.GamePlayer)
-local EnemyClass = require(ReplicatedStorage.Classes.Entities.Enemy.Enemy)
 local Map = require(ReplicatedStorage.Classes.Map.Map)
 local RemoteFolder = ReplicatedStorage.Remotes
 
 --All lists are filled with class objects, not roblox objects
 World.playerList = {}
-World.enemyList = {}
 
 function World:OnNew()
     self:RemoveRegen()
     self:InitializePlayerList()
     Map:Generate()
 end
+
 function World:InitializePlayerList()
     PlayerService.PlayerAdded:Connect(
         function(player)
@@ -70,27 +69,6 @@ end
 
 function World:GetPlayerList()
     return self.playerList
-end
-
-function World:GetEnemy(name)
-    return self.enemyList[name]
-end
-
-function World:GetEnemyList()
-    return self.enemyList
-end
-
---Will be replaced later.
-function World:Dev_SpawnEnemy(name)
-    self.enemyList[name] = EnemyClass:New({name = name, assetFolder = ReplicatedStorage.Assets.Enemies[name]})
-    self.enemyList[name].model.Destroying:Connect(
-        function()
-            wait(1)
-            self.enemyList[name] = nil
-        end
-    )
-
-    self.enemyList[name]:Spawn(workspace.EnemySpawn.Position)
 end
 
 return World

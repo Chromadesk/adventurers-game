@@ -44,7 +44,6 @@ function Map:HandleRoomUnlocking(room)
 
     room.exitDoor.touched:Connect(
         function(t)
-            print(room.enemies)
             if #room.enemies > 0 then
                 return
             end

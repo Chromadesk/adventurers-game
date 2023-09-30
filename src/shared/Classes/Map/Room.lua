@@ -19,6 +19,7 @@ function Room:OnNew()
 
     if self.isSpawnRoom then
         self:InitializePlayerSpawns()
+        self:SpawnEnemies()
     end
 end
 
@@ -45,15 +46,18 @@ function Room:SpawnEnemies()
     for _, v in pairs(self.model.EnemySpawns:GetChildren()) do
         v.Transparency = 1
         v.CanCollide = false
-        if #self.enemies < 1 or math.random(1, 100) <= 60 then
+        if #self.enemies < 1 and not self.isSpawnRoom or math.random(1, 100) <= 60 and not self.isSpawnRoom then
             self.enemies[i] =
                 EnemyClass:New({name = "Bandit", assetFolder = game.ReplicatedStorage.Assets.Enemies["Bandit"]})
 
             self.enemies[i].humanoid.Died:Connect(
                 function()
-                    print(i)
-                    self.enemies[i] = nil
-                    print(self.enemies)
+                    for _, v in pairs(self.enemies) do
+                        local trueIndex = table.find(self.enemies, v)
+                        if self.enemies[trueIndex].humanoid.Health <= 0 then
+                            table.remove(self.enemies, trueIndex)
+                        end
+                    end
                 end
             )
 

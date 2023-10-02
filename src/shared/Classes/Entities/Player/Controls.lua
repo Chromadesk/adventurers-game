@@ -9,7 +9,7 @@ end
 
 local pauseInput = false
 function Controls:InputBegan(input, wasProcessed)
-    if wasProcessed or pauseInput then
+    if wasProcessed or pauseInput or self.player.humanoid.Health <= 0 then
         return
     end
 

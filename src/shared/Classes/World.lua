@@ -9,6 +9,7 @@ local RemoteFolder = ReplicatedStorage.Remotes
 
 --All lists are filled with class objects, not roblox objects
 World.playerList = {}
+World.objects = {}
 
 function World:OnNew()
     self:RemoveRegen()
@@ -69,6 +70,23 @@ end
 
 function World:GetPlayerList()
     return self.playerList
+end
+
+function World:AddObject(object)
+    table.insert(self.objects, object)
+end
+
+function World:RemoveObject(object)
+    table.remove(self.objects, table.find(self.objects, object))
+end
+
+function World:GetObjectById(id)
+    for _, v in pairs(self.objects) do
+        if v.id == id then
+            return v
+        end
+    end
+    return nil
 end
 
 return World

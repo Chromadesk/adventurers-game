@@ -46,7 +46,7 @@ function Room:SpawnEnemies()
     for _, v in pairs(self.model.EnemySpawns:GetChildren()) do
         v.Transparency = 1
         v.CanCollide = false
-        if #self.enemies < 1 and not self.isSpawnRoom or math.random(1, 100) <= 60 and not self.isSpawnRoom then
+        if math.random(1, 100) <= 60 and not self.isSpawnRoom then
             self.enemies[i] =
                 EnemyClass:New({name = "Bandit", assetFolder = game.ReplicatedStorage.Assets.Enemies["Bandit"]})
 

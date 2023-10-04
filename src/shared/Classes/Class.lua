@@ -13,7 +13,6 @@ function Class:New(o)
 
 	o.id = nextId
 	nextId = nextId + 1
-	self:GetWorld():AddObject(o)
 
 	if o.OnNew then
 		o:OnNew()
@@ -34,10 +33,6 @@ end
 
 function Class:Equals(class, o)
 	return class.id == o.id
-end
-
-function Class:GetWorld()
-	return require(game:GetService("ReplicatedStorage").Classes.World)
 end
 
 return Class

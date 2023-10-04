@@ -1,7 +1,7 @@
 local Class = require(game:GetService("ReplicatedStorage").Classes.Class)
 local Room = Class:Extend()
 
-local EnemyClass = require(game.ReplicatedStorage.Classes.Entities.Enemy.Enemy)
+local SpawnEnum = require(game.ReplicatedStorage.Classes.Entities.Enemy.SpawnEnum)
 
 function Room:OnNew()
     assert(self.model, "Room requires a room model")
@@ -47,8 +47,7 @@ function Room:SpawnEnemies()
         v.Transparency = 1
         v.CanCollide = false
         if math.random(1, 100) <= 60 and not self.isSpawnRoom then
-            self.enemies[i] =
-                EnemyClass:New({name = "Bandit", assetFolder = game.ReplicatedStorage.Assets.Enemies["Bandit"]})
+            self.enemies[i] = SpawnEnum.Enemies.Bandit
 
             self.enemies[i].humanoid.Died:Connect(
                 function()

@@ -1,6 +1,7 @@
 local Class = require(game:GetService("ReplicatedStorage").Classes.Class)
 local Room = Class:Extend()
 
+local Enemy = require(game.ReplicatedStorage.Classes.Entities.Enemy.Enemy)
 local SpawnEnum = require(game.ReplicatedStorage.Classes.Entities.Enemy.SpawnEnum)
 
 function Room:OnNew()
@@ -47,7 +48,7 @@ function Room:SpawnEnemies()
         v.Transparency = 1
         v.CanCollide = false
         if math.random(1, 100) <= 60 and not self.isSpawnRoom then
-            self.enemies[i] = SpawnEnum.Enemies.Bandit
+            self.enemies[i] = Enemy:New(SpawnEnum.Enemies.BANDIT)
 
             self.enemies[i].humanoid.Died:Connect(
                 function()
@@ -60,6 +61,7 @@ function Room:SpawnEnemies()
                 end
             )
 
+            self.enemies[i]:Initialize()
             self.enemies[i]:Spawn(v.Position)
         end
         i = i + 1

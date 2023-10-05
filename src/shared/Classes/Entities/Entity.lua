@@ -7,20 +7,21 @@ local HitDetection = require(ReplicatedStorage.Classes.HitDetection)
 function Entity:OnNew()
     assert(self.name, "Entities must have a name.")
     assert(self.assetFolder, "Entities must have an assetFolder.")
-    assert(
-        self.assetFolder[self.name] and self.assetFolder[self.name]:IsA("Model"),
-        "Entities must have a model of the same name."
-    )
+    assert(self.model or self.assetFolder[self.name], "Entities must have a Model (can be put in assetFolder)")
     assert(self.maxHealth and self.maxHealth >= 1, "Entities must have at least 1 health. (missing maxHealth)")
     assert(self.maxSpeed and self.maxSpeed >= 0, "Entities must have at least 0 Speed (missing maxSpeed)")
+    assert(self.weapon, "Entities must have a default weapon.")
 
-    self.assetFolder = self.assetFolder:Clone()
-    self.model = self.assetFolder[self.name]
+    if not self.assetFolder:IsA("Player") then
+        self.assetFolder = self.assetFolder:Clone()
+    end
+    if not self.model then
+        print("frog")
+        self.model = self.assetFolder[self.name]
+    end
     self.humanoid = self.model.Humanoid
     self.animator = self.humanoid.Animator
     self.animations = {}
-    self.weapon = nil
-    self.shield = nil
 
     self.humanoid.Died:Connect(
         function()
@@ -63,11 +64,15 @@ function Entity:InitializeHumanoid()
 end
 
 function Entity:LoadAnimations()
-    throw("Entities must have a LoadAnimations method.")
+    throw("Entities must have a LoadAnimations() method.")
 end
 
 function Entity:HandleHit()
-    throw("Entities must have a HandleHit method.")
+    throw("Entities must have a HandleHit() method.")
+end
+
+function Entity:Initialize()
+    throw("Entities must have a Initialize() method.")
 end
 
 return Entity

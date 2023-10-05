@@ -3,6 +3,11 @@ local Enemy = Entity:Extend()
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local AiBehaviorClass = require(ReplicatedStorage.Classes.Entities.Enemy.AiBehavior)
+local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
+
+function Enemy:Initialize()
+    self:EquipWeapon(WeaponClass:New(self.weapon))
+end
 
 function Enemy:HandleHit(contact)
     if contact.Name == "ShieldHitbox" then

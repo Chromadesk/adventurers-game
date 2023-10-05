@@ -3,20 +3,12 @@ local Shield = Class:Extend()
 
 local HitDetection = require(game:GetService("ReplicatedStorage").Classes.HitDetection)
 
-Shield.assetFolder = nil
-Shield.statsFolder = nil
-Shield.slowAmount = nil
-Shield.model = nil
-
 function Shield:OnNew()
     assert(self.assetFolder, "Shields must have an asset folder with their included data.")
     assert(self.assetFolder.Animations, "Shield asset folder must have an animations folder, even if it is empty.")
-    assert(self.assetFolder.Stats, "Shield asset folder must have a stats folder even if it is empty.")
-    assert(self.assetFolder.Stats.SlowAmount, "Shield must have an SlowAmount stat.")
+    assert(self.slowAmount, "Shield must have an slowAmount stat.")
 
     self.assetFolder = self.assetFolder:Clone()
-    self.statsFolder = self.assetFolder.Stats
-    self.slowAmount = self.statsFolder.SlowAmount.Value
     self.model = self.assetFolder.Model
 
     self:IntializeModel()
@@ -48,7 +40,7 @@ function Shield:Use(entity, isActive)
         return
     end
     entity.animations.guard:Play()
-    entity.humanoid.WalkSpeed = entity.maxSpeed * (self.slowAmount / 100)
+    entity.humanoid.WalkSpeed = entity.maxSpeed * self.slowAmount
     hitbox = HitDetection:MakeShieldHitbox(entity.model, self.range)
     entity.model.ArmLUpper.CanTouch = false
     entity.model.ArmLLower.CanTouch = false

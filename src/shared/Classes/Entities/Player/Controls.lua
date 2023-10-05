@@ -1,10 +1,8 @@
 local Class = require(game.ReplicatedStorage.Classes.Class)
 local Controls = Class:Extend()
 
-Controls.player = nil
-
 function Controls:OnNew()
-    assert(self.player and self.player.reference, "Controls requires a PlayerClass object.")
+    assert(self.player, "Controls requires a PlayerClass object.")
 end
 
 local pauseInput = false

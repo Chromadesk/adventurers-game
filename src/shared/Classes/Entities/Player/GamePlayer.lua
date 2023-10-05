@@ -2,27 +2,18 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Entity = require(game.ReplicatedStorage.Classes.Entities.Entity)
 local GamePlayer = Entity:Extend()
+local ItemEnum = require(game.ReplicatedStorage.Classes.Items.ItemEnum)
+local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
+local ShieldClass = require(ReplicatedStorage.Classes.Items.Shield)
 
 local HitDetection = require(game:GetService("ReplicatedStorage").Classes.HitDetection)
 
-function GamePlayer:OnNew()
-    assert(self.reference, "GamePlayer must reference a roblox player")
-
-    self.name = self.reference.name
-    self.model = workspace:WaitForChild(self.name)
-    self.model.Parent = workspace.PlayerCharacters
-    self.humanoid = self.model.Humanoid
-    self.attackRemote = nil
-    self.guardRemote = nil
-
-    --Server loaded animations
-    self.animations = {}
-    self.animations["attack"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Attack)
-    self.animations["guard"] = self.humanoid:LoadAnimation(ReplicatedStorage.Assets.Animations.Guard)
-
-    HitDetection:InitializeCollisionBox(self.model)
-
+function GamePlayer:Initialize()
+    self:EquipWeapon(WeaponClass:New(ItemEnum.Weapons.LONGSWORD))
+    self:EquipShield(ShieldClass:New(ItemEnum.Shields.SHIELD))
+    ReplicatedStorage.Remotes.LoadAnimations:FireClient(self.assetFolder, self)
     self:InitializeRemotes()
+    self:LoadAnimations()
 end
 
 function GamePlayer:HandleHit(contact)
@@ -46,6 +37,11 @@ function GamePlayer:InitializeRemotes()
             self.shield:Use(self, isActive)
         end
     )
+end
+
+function GamePlayer:LoadAnimations()
+    self.animations["attack"] = self.animator:LoadAnimation(ReplicatedStorage.Assets.Animations.Attack)
+    self.animations["guard"] = self.animator:LoadAnimation(ReplicatedStorage.Assets.Animations.Guard)
 end
 
 return GamePlayer

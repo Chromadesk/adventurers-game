@@ -5,8 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PlayerService = game:GetService("Players")
 local GamePlayerClass = require(ReplicatedStorage.Classes.Entities.Player.GamePlayer)
 local Map = require(ReplicatedStorage.Classes.Map.Map)
-local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
-local ShieldClass = require(ReplicatedStorage.Classes.Items.Shield)
+local ItemEnum = require(ReplicatedStorage.Classes.Items.ItemEnum)
 local RemoteFolder = ReplicatedStorage.Remotes
 
 --All lists are filled with class objects, not roblox objects
@@ -28,20 +27,16 @@ function World:InitializePlayerList()
                     self.playerList[player.Name] =
                         GamePlayerClass:New(
                         {
-                            assetFolder = Instance.new("Folder", player),
-                            reference = player,
+                            name = player.Name,
+                            assetFolder = player,
+                            model = workspace:WaitForChild(player.Name),
                             maxHealth = 100,
-                            maxSpeed = 16
+                            maxSpeed = 16,
+                            weapon = ItemEnum.Weapons.LONGSWORD,
+                            shield = ItemEnum.Shields.SHIELD
                         }
                     )
-
-                    self.playerList[player.Name]:EquipWeapon(
-                        WeaponClass:New({assetFolder = ReplicatedStorage.Assets.Items.Longsword})
-                    )
-                    self.playerList[player.Name]:EquipShield(
-                        ShieldClass:New({assetFolder = ReplicatedStorage.Assets.Items.Shield})
-                    )
-                    RemoteFolder.LoadAnimations:FireClient(player, self.playerList[player.Name])
+                    self.playerList[player.Name]:Initialize()
                 end
             )
         end

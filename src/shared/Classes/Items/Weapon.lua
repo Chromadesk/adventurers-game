@@ -3,29 +3,15 @@ local Weapon = Class:Extend()
 
 local HitDetection = require(game:GetService("ReplicatedStorage").Classes.HitDetection)
 
-Weapon.assetFolder = nil
-Weapon.statsFolder = nil
-Weapon.attackTime = nil
-Weapon.cooldown = nil
-Weapon.damage = nil
-Weapon.range = nil
-Weapon.model = nil
-
 function Weapon:OnNew()
     assert(self.assetFolder, "Weapons must have an asset folder with their included data.")
     assert(self.assetFolder.Animations, "Weapon asset folder must have an animations folder, even if it is empty.")
-    assert(self.assetFolder.Stats, "Weapon asset folder must have a stats folder even if it is empty.")
-    assert(self.assetFolder.Stats.AttackTime, "Weapon must have an AttackTime stat.")
-    assert(self.assetFolder.Stats.Cooldown, "Weapon must have a Cooldown stat.")
-    assert(self.assetFolder.Stats.Damage, "Weapon must have a Damage stat.")
-    assert(self.assetFolder.Stats.Range, "Weapon must have a Range stat.")
+    assert(self.attackTime, "Weapon must have an AttackTime stat.")
+    assert(self.cooldown, "Weapon must have a Cooldown stat.")
+    assert(self.damage, "Weapon must have a Damage stat.")
+    assert(self.range, "Weapon must have a Range stat.")
 
     self.assetFolder = self.assetFolder:Clone()
-    self.statsFolder = self.assetFolder.Stats
-    self.attackTime = self.statsFolder.AttackTime.Value
-    self.cooldown = self.statsFolder.Cooldown.Value
-    self.damage = self.statsFolder.Damage.Value
-    self.range = self.statsFolder.Range.Value
     self.model = self.assetFolder.Model
 
     self:IntializeModel()

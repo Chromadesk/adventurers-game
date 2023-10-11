@@ -13,10 +13,12 @@ function Entity:OnNew()
     assert(self.weapon, "Entities must have a default weapon.")
 
     if not self.assetFolder:IsA("Player") then
+        print(self.assetFolder.Parent)
         self.assetFolder = self.assetFolder:Clone()
     end
+    --bug, enemy entities are not being initiated and instead the same instance's values are being used for each initialization.
+    --ex: self.assetFolder always references the same clone instead of creating a new instance.
     if not self.model then
-        print("frog")
         self.model = self.assetFolder[self.name]
     end
     self.humanoid = self.model.Humanoid

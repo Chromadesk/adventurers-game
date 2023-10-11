@@ -31,8 +31,11 @@ function Class:IsA(class)
 	return false
 end
 
-function Class:Equals(class, o)
-	return class.id == o.id
+function Class:Equals(o)
+	if o == this then
+		return true
+	end
+	return o.id == this.id
 end
 
 return Class

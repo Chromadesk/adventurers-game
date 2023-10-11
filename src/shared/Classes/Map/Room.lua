@@ -1,6 +1,7 @@
 local Class = require(game:GetService("ReplicatedStorage").Classes.Class)
 local Room = Class:Extend()
 
+local Utility = require(game:GetService("ReplicatedStorage").Classes.Utility)
 local Enemy = require(game.ReplicatedStorage.Classes.Entities.Enemy.Enemy)
 local SpawnEnum = require(game.ReplicatedStorage.Classes.Entities.Enemy.SpawnEnum)
 
@@ -48,9 +49,11 @@ function Room:SpawnEnemies()
         v.Transparency = 1
         v.CanCollide = false
         if math.random(1, 100) <= 60 and not self.isSpawnRoom then
-            self.enemies[i] = Enemy:New(SpawnEnum.Enemies.BANDIT)
+            local newem = Enemy:New(Utility:Copy(SpawnEnum.Enemies.BANDIT))
+            print(newem.id)
+            self.enemies[i] = newem
 
-            self.enemies[i].humanoid.Died:Connect(
+            newem.humanoid.Died:Connect(
                 function()
                     for _, v in pairs(self.enemies) do
                         local trueIndex = table.find(self.enemies, v)
@@ -61,8 +64,8 @@ function Room:SpawnEnemies()
                 end
             )
 
-            self.enemies[i]:Initialize()
-            self.enemies[i]:Spawn(v.Position)
+            newem:Initialize()
+            newem:Spawn(v.Position)
         end
         i = i + 1
     end

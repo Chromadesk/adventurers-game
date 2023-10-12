@@ -63,17 +63,22 @@ function GetHitbox(entity, size, damage)
     if damage then
         local debounce = false
         local function onTouch(toucher)
-            print(toucher)
             local hum = FindHumanoid(toucher)
-            print(hum)
-            if debounce or toucher:IsDescendantOf(entity.model) or not hum then
+            if
+                debounce or toucher:IsDescendantOf(entity.model) or not hum or
+                    hum:GetAttribute("TeamTag") == entity.humanoid:GetAttribute("TeamTag")
+             then
                 return
             end
             debounce = true
-            if IsNotHittingShield(hitbox) and toucher.Name ~= "ShieldHitbox" then
+            local isShield, shieldPart = IsHittingShield(hitbox)
+            if isShield or toucher.Name == "ShieldHitbox" then
+                entity:HandleHit(shieldPart)
+            else
                 hum:TakeDamage(damage)
+                entity:HandleHit(toucher)
             end
-            entity:HandleHit(toucher)
+
             hitbox:Destroy()
         end
         hitbox.Touched:Connect(onTouch)
@@ -84,7 +89,8 @@ end
 
 function FindHumanoid(obj)
     local folder = obj.Parent
-    while folder.Name ~= "Workspace" and not folder:IsA("Accessory") do
+    --somehow its hitting things without parents sometimes??
+    while folder and folder.Name ~= "Workspace" and not folder:IsA("Accessory") do
         if folder:FindFirstChild("Humanoid") then
             return folder.Humanoid
         end
@@ -93,13 +99,13 @@ function FindHumanoid(obj)
     return nil
 end
 
-function IsNotHittingShield(hitbox)
+function IsHittingShield(hitbox)
     for _, v in pairs(workspace:GetPartsInPart(hitbox)) do
         if v.Name == "ShieldHitbox" then
-            return false
+            return true, v
         end
     end
-    return true
+    return false
 end
 
 return HitDetection

@@ -54,12 +54,8 @@ function Room:SpawnEnemies()
 
             newem.humanoid.Died:Connect(
                 function()
-                    for _, v in pairs(self.enemies) do
-                        local trueIndex = table.find(self.enemies, v)
-                        if self.enemies[trueIndex].humanoid.Health <= 0 then
-                            table.remove(self.enemies, trueIndex)
-                        end
-                    end
+                    local trueIndex = table.find(self.enemies, newem)
+                    table.remove(self.enemies, trueIndex)
                 end
             )
 
@@ -74,9 +70,6 @@ function Room:Unlock()
     for _, v in pairs(self.enemies) do
         task.spawn(
             function()
-                print("go man go")
-                print(v)
-                print(v.AiBehavior)
                 v.AiBehavior:FollowPlayer()
             end
         )

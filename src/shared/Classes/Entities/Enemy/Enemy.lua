@@ -7,6 +7,7 @@ local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
 
 function Enemy:Initialize(spawnPos)
     self:EquipWeapon(WeaponClass:New(self.weapon))
+    self:AddTeamTag("enemy")
     self.model.Parent = workspace.NPCs
     self:LoadAnimations()
     self.model:MoveTo(spawnPos)

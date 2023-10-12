@@ -61,6 +61,11 @@ function Entity:InitializeHumanoid()
     self.humanoid.MaxSlopeAngle = 0
 end
 
+--Use in :Initialize() method for hit detection so the same teams cant attack eachother.
+function Entity:AddTeamTag(tag)
+    self.humanoid:SetAttribute("TeamTag", tag)
+end
+
 function Entity:LoadAnimations()
     throw("Entities must have a LoadAnimations() method.")
 end

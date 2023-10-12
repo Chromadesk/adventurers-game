@@ -52,14 +52,11 @@ function AiBehavior:GetClosestPlayer(model)
 end
 
 function AiBehavior:FollowPlayer()
-    print("followPlayer")
     self.NPC.humanoid.WalkSpeed = self.NPC.maxSpeed
     local character, distance = self:GetClosestPlayer(self.NPC.model)
-    print(character, distance)
 
     local update = 0
     local updateTime = 16 / self.NPC.humanoid.WalkSpeed
-    print("before loop")
     while wait() and self.NPC.humanoid.Health > 0 and character and character.Humanoid.Health > 0 do
         if update >= updateTime or GetTargetDistance(self.NPC.model.HumanoidRootPart, self.FollowPart) <= 1 then
             self.FollowPart.CFrame =
@@ -75,7 +72,6 @@ function AiBehavior:FollowPlayer()
         update = update + 0.05
         character, distance = self:GetClosestPlayer(self.NPC.model)
     end
-    print("returning to idle")
     self:Idle()
     return
 end

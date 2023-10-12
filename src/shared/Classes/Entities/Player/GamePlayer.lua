@@ -11,6 +11,7 @@ local HitDetection = require(game:GetService("ReplicatedStorage").Classes.HitDet
 function GamePlayer:Initialize()
     self:EquipWeapon(WeaponClass:New(ItemEnum.Weapons.LONGSWORD))
     self:EquipShield(ShieldClass:New(ItemEnum.Shields.SHIELD))
+    self:AddTeamTag("player")
     ReplicatedStorage.Remotes.LoadAnimations:FireClient(self.assetFolder, self)
     self:InitializeRemotes()
     self:LoadAnimations()

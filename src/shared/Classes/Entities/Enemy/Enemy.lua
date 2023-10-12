@@ -5,8 +5,16 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local AiBehaviorClass = require(ReplicatedStorage.Classes.Entities.Enemy.AiBehavior)
 local WeaponClass = require(ReplicatedStorage.Classes.Items.Weapon)
 
-function Enemy:Initialize()
+function Enemy:Initialize(spawnPos)
     self:EquipWeapon(WeaponClass:New(self.weapon))
+    self.model.Parent = workspace.NPCs
+    self:LoadAnimations()
+    self.model:MoveTo(spawnPos)
+    task.spawn(
+        function()
+            self.AiBehavior = AiBehaviorClass:New({NPC = self})
+        end
+    )
 end
 
 function Enemy:HandleHit(contact)
@@ -14,17 +22,6 @@ function Enemy:HandleHit(contact)
         self.AiBehavior:DoStun(2)
         return
     end
-end
-
-function Enemy:Spawn(spawnPos)
-    self.model.Parent = workspace.NPCs
-    self:LoadAnimations()
-    self.model:MoveTo(spawnPos)
-    task.spawn(
-        function()
-            AiBehaviorClass:New({NPC = self})
-        end
-    )
 end
 
 function Enemy:LoadAnimations()

@@ -1,3 +1,5 @@
+local Debris = game:GetService("Debris")
+
 local Class = require(game:GetService("ReplicatedStorage").Classes.Class)
 local HitDetection = Class:Extend()
 
@@ -12,8 +14,7 @@ function HitDetection:MakeRectangleHitbox(entity, range, damage)
     hitbox.weld.Part1 = entity.model.HumanoidRootPart
 
     hitbox.Parent = entity.model
-    wait(0.05)
-    hitbox:Destroy()
+    Debris:AddItem(hitbox, 0.05)
 end
 
 function HitDetection:MakeShieldHitbox(model, range)
@@ -48,7 +49,7 @@ end
 
 function GetHitbox(entity, size, damage)
     local hitbox = Instance.new("Part")
-    hitbox.Transparency = 1
+    hitbox.Transparency = 0.5
     hitbox.CanCollide = false
     hitbox.Anchored = false
     hitbox.Size = size
@@ -62,7 +63,9 @@ function GetHitbox(entity, size, damage)
     if damage then
         local debounce = false
         local function onTouch(toucher)
+            print(toucher)
             local hum = FindHumanoid(toucher)
+            print(hum)
             if debounce or toucher:IsDescendantOf(entity.model) or not hum then
                 return
             end

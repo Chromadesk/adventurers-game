@@ -50,7 +50,6 @@ function Room:SpawnEnemies()
         v.CanCollide = false
         if math.random(1, 100) <= 60 and not self.isSpawnRoom then
             local newem = Enemy:New(Utility:Copy(SpawnEnum.Enemies.BANDIT))
-            print(newem.id)
             self.enemies[i] = newem
 
             newem.humanoid.Died:Connect(
@@ -64,8 +63,7 @@ function Room:SpawnEnemies()
                 end
             )
 
-            newem:Initialize()
-            newem:Spawn(v.Position)
+            newem:Initialize(v.Position)
         end
         i = i + 1
     end
@@ -76,6 +74,9 @@ function Room:Unlock()
     for _, v in pairs(self.enemies) do
         task.spawn(
             function()
+                print("go man go")
+                print(v)
+                print(v.AiBehavior)
                 v.AiBehavior:FollowPlayer()
             end
         )

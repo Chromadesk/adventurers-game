@@ -84,6 +84,13 @@ function World:GetPlayerList()
 end
 
 function World:AddObject(object)
+    if object.humanoid then
+        object.humanoid.Died:Connect(
+            function()
+                self:RemoveObject(object)
+            end
+        )
+    end
     table.insert(self.objects, object)
 end
 
@@ -94,6 +101,15 @@ end
 function World:GetObjectById(id)
     for _, v in pairs(self.objects) do
         if v.id == id then
+            return v
+        end
+    end
+    return nil
+end
+
+function World:GetObjectByHumanoid(humanoid)
+    for _, v in pairs(self.objects) do
+        if v.humanoid and v.humanoid == humanoid then
             return v
         end
     end

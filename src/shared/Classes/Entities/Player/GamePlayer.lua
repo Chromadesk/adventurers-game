@@ -14,6 +14,7 @@ function GamePlayer:Initialize()
     ReplicatedStorage.Remotes.LoadAnimations:FireClient(self.assetFolder, self)
     self:InitializeRemotes()
     self:LoadAnimations()
+    self.model.Parent = workspace.PlayerCharacters
 end
 
 function GamePlayer:HandleHit(contact)
